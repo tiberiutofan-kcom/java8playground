@@ -1,6 +1,6 @@
-package java8playground.interfaces;
+package java8playground;
 
-import java8playground.interfaces.LongRunningOperations.Weather;
+import java8playground.LongRunningOperations.Weather;
 import org.junit.Test;
 
 import java.util.concurrent.CompletableFuture;

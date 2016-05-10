@@ -1,4 +1,4 @@
-package java8playground.optional;
+package java8playground;
 
 import java.util.Map;
 import java.util.Optional;

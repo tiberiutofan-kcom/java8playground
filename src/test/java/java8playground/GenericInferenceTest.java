@@ -1,4 +1,4 @@
-package java8playground.interfaces;
+package java8playground;
 
 import org.junit.Assert;
 import org.junit.Test;

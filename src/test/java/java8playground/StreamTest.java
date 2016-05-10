@@ -1,4 +1,4 @@
-package java8playground.interfaces;
+package java8playground;
 
 import com.google.common.collect.Collections2;
 import org.junit.Test;
