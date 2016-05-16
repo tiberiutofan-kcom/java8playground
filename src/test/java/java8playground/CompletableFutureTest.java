@@ -26,7 +26,7 @@ public class CompletableFutureTest {
 		CompletableFuture<Weather> wUnderground = CompletableFuture.supplyAsync(() -> LongRunningOperations.weatherFromWUnderground("Bucharest"));
 
 		CompletableFuture<Void> future =
-				accuweather.applyToEither(wUnderground, Weather::getTemperature).thenAccept(System.out::println);
+				accuweather.applyToEither(wUnderground, Weather::getDescription).thenAccept(System.out::println);
 
 		future.get();
 	}
@@ -37,7 +37,7 @@ public class CompletableFutureTest {
 		CompletableFuture<Weather> wUnderground = CompletableFuture.supplyAsync(() -> LongRunningOperations.weatherFromWUnderground("Bucharest"));
 
 		CompletableFuture<Void> future = accuweather
-				.thenCombine(wUnderground, (w1, w2) -> w1.getChanceOfPrecipitation() + w2.getChanceOfPrecipitation() / 2)
+				.thenCombine(wUnderground, (w1, w2) -> (w1.getChanceOfPrecipitation() + w2.getChanceOfPrecipitation()) / 2)
 				.thenCompose(this::orderUmbrellaIfItRains)
 				.thenAccept(b -> System.out.printf("Umbrella ordered? %b", b));
 

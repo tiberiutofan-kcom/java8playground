@@ -1,20 +1,16 @@
 package java8playground;
 
-import com.google.common.collect.Collections2;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.math.BigInteger;
-import java.time.LocalDate;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static java.time.LocalDate.now;
 import static java.util.Collections.synchronizedList;
 import static java.util.Comparator.comparing;
-import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.*;
 import static java8playground.streams.PageCollector.toPage;
 
@@ -29,8 +25,10 @@ public class StreamTest {
 				new Person("Martin", "Fowler", 1963),
 				new Person("James", "Gosling", 1955),
 				new Person("Brendan", "Eich", 1961),
+				new Person(null, null, null),
 				new Person("Kent", "Beck", 1961),
-				new Person("Joshua", "Bloch", 1961)
+				new Person("Joshua", "Bloch", 1961),
+				new Person(null, null, null)
 		);
 	}
 
@@ -54,14 +52,17 @@ public class StreamTest {
 		Integer pageOffset = 0;
 		Integer pageSize = 0;
 		persons.stream().skip(pageOffset).limit(pageSize).collect(toPage(pageOffset, pageSize, persons.size()));
+
+
 //        products.stream().skip((currentPage - 1) * pageSize).limit(pageSize)
 //                .forEach(System.out::println);
 
 		List<String> words = Arrays.asList("Java", "Scala", "JavaScript", "Kotlin");
-		words.stream()
+		words.stream().parallel()
 				.map(word -> word.split(""))
 				.flatMap(Arrays::stream)
 				.distinct()
+				.sequential()
 				.forEach(System.out::print);
 		//outputs: JavSclriptKon
 
@@ -86,25 +87,32 @@ public class StreamTest {
 		System.out.print(findAnyPrime.get());
 	}
 
-	public Map<String, Person> indexById() {
-		return persons.stream().collect(toMap(Person::getId, identity()));
+	@Test
+	public void indexById() {
+		Map<String, String> map = persons.stream().collect(toMap(Person::getId, Person::getFirstName));
+		System.out.println(map.getClass());
 	}
 
+	@Test
 	public void primeNumbers() {
-		Stream.iterate(0, n -> n + 1)
-				.map(BigInteger::valueOf)
-				.filter(i -> i.isProbablePrime(Integer.MAX_VALUE))
-				.limit(10)
-				.forEach(System.out::println);
+		Stream.iterate(0, n -> n + 1).map(BigInteger::valueOf).filter(i -> {
+			System.out.println();
+			return i.isProbablePrime(Integer.MAX_VALUE);
+		}).limit(10).forEach(System.out::println);
 	}
 
-	public List<Integer> generateFirstPrimeNumbers(int numberOfPrimes) {
-		return Stream.iterate(0, n -> n + 1)
-				.map(BigInteger::valueOf)
-				.filter(i -> i.isProbablePrime(Integer.MAX_VALUE))
-				.limit(numberOfPrimes)
-				.map(BigInteger::intValue)
-				.collect(toList());
+	@Test
+	public void generateFirstPrimeNumbers() {
+		List<Integer> accumulator =
+				Stream.iterate(0, n -> n + 1).parallel()
+						.map(BigInteger::valueOf)
+						.filter(i -> i.isProbablePrime(Integer.MAX_VALUE))
+						.limit(100_000)
+						.map(BigInteger::intValue)
+						.collect(Collectors.toList());
+
+		Assert.assertEquals(100_000, accumulator.size());
+//		return accumulator;
 	}
 
 	public List<Person> personsUnderAge(int age) {
@@ -112,9 +120,16 @@ public class StreamTest {
 				.collect(toCollection(() -> synchronizedList(new ArrayList<>())));
 	}
 
-	public List<Person> personsStartingWithA() {
-		return persons.stream().filter(p -> p.getFirstName().startsWith("A"))
+	@Test
+	public void personsStartingWithA() {
+		List<String> personsWithA = persons.stream()
+				.map(Person::getFirstName)
+				.map(Optional::ofNullable)
+				.map(n -> n.orElse("Kappa"))
+				.filter(n -> n.startsWith("K"))
 				.collect(collectingAndThen(toList(), Collections::unmodifiableList));
+
+		System.out.println(personsWithA);
 	}
 
 	@Test
