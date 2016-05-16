@@ -22,7 +22,7 @@ public class LongRunningOperations {
 		System.out.println("Weather Underground called!");
 		try {
 			Thread.sleep(random.nextInt(1000));
-			return new Weather(city, 20.0, 90.0, "Weather Underground says: Mostly sunny");
+			return new Weather(city, 20.0, 50.0, "Weather Underground says: Mostly sunny");
 		} catch (InterruptedException e) {
 			throw new RuntimeException(e);
 		} finally {

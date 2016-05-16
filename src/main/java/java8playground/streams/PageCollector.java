@@ -25,7 +25,6 @@ public class PageCollector<T> implements Collector<T, List<T>, Page<T>> {
     }
 
     public static <T> Collector<T, ?, Page<T>> toPage(Integer currentPageOffset, Integer pageSize, Integer totalCount) {
-/*
         return Collector.of(ArrayList::new, List::add, (left, right) -> {
             left.addAll(right);
             return left;
@@ -35,8 +34,6 @@ public class PageCollector<T> implements Collector<T, List<T>, Page<T>> {
                 .withLimit(pageSize)
                 .withTotalCount(totalCount)
                 .build());
-*/
-        return new PageCollector<>(currentPageOffset, pageSize, totalCount);
     }
 
     @Override
