@@ -1,4 +1,4 @@
-package java8playground;
+package java8playground.optional;
 
 import org.junit.Test;
 
@@ -7,7 +7,9 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import static java8playground.OptionalLegacyTest.Category.*;
+import static java8playground.optional.OptionalLegacyTest.Category.A;
+import static java8playground.optional.OptionalLegacyTest.Category.B;
+import static java8playground.optional.OptionalLegacyTest.Category.C;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 

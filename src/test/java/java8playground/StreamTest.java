@@ -4,14 +4,25 @@ import java8playground.streams.Page;
 import org.junit.Test;
 
 import java.math.BigInteger;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.time.LocalDate.now;
 import static java.util.Collections.synchronizedList;
 import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.counting;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toCollection;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 import static java8playground.streams.PageCollector.toPage;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -152,7 +163,7 @@ public class StreamTest {
 
     @Test
     public void countByYearOfBirth() {
-        Map<Integer, Long> countByYear = persons.stream().sorted(comparing(Person::getYearOfBirth)).collect(groupingBy(Person::getYearOfBirth, counting()));
+        Map<Integer, Long> countByYear = persons.stream().collect(groupingBy(Person::getYearOfBirth, counting()));
 
         countByYear.forEach((year, count) -> System.out.println(year + " " + count));
     }
