@@ -1,7 +1,6 @@
 package java8playground.concurrency;
 
-import java8playground.LongRunningOperations;
-import java8playground.LongRunningOperations.Weather;
+import java8playground.concurrency.LongRunningOperations.Weather;
 import org.junit.Test;
 
 import java.util.concurrent.CompletableFuture;

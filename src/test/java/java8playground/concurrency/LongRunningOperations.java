@@ -1,4 +1,4 @@
-package java8playground;
+package java8playground.concurrency;
 
 import java.util.Random;
 

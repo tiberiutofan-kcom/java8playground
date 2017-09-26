@@ -11,6 +11,7 @@ repositories {
 
 dependencies {
     compile 'com.google.guava:guava:19.0'
+    compile 'org.projectlombok:lombok:1.16.18'
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-all:1.9.5'

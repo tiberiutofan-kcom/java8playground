@@ -1,6 +1,6 @@
-package java8playground;
+package java8playground.streams;
 
-import java8playground.streams.Page;
+import java8playground.Person;
 import org.junit.Test;
 
 import java.math.BigInteger;
@@ -10,11 +10,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.time.LocalDate.now;
+import static java.util.Arrays.asList;
 import static java.util.Collections.synchronizedList;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.collectingAndThen;
@@ -29,18 +29,24 @@ import static org.junit.Assert.assertTrue;
 
 public class StreamTest {
 
-    private List<Integer> numbers = Arrays.asList(1, 6, 5, 3, 4, 2, 8, 1, 5, 7, 4);
-    private List<Person> persons = createPersonList();
+    private List<Integer> numbers = asList(1, 6, 5, 3, 4, 2, 8, 1, 5, 7, 4);
 
-    private static List<Person> createPersonList() {
-        return Arrays.asList(
-                new Person("Robert", "Martin", 1952),
-                new Person("Martin", "Fowler", 1963),
-                new Person("James", "Gosling", 1955),
-                new Person("Brendan", "Eich", 1961),
-                new Person("Kent", "Beck", 1961),
-                new Person("Joshua", "Bloch", 1961)
-        );
+    private List<Person> persons = asList(
+            new Person("Robert", "Martin", 1952),
+            new Person("Martin", "Fowler", 1963),
+            new Person("James", "Gosling", 1955),
+            new Person("Brendan", "Eich", 1961),
+            new Person("Kent", "Beck", 1961),
+            new Person("Joshua", "Bloch", 1961)
+    );
+
+    @Test
+    public void countUnder55() {
+        long under55Count = persons.stream()
+                .filter(p -> now().getYear() - p.getYearOfBirth() < 55)
+                .count();
+
+        assertEquals(1, under55Count);
     }
 
     @Test
@@ -62,17 +68,8 @@ public class StreamTest {
     }
 
     @Test
-    public void infiniteRandom() {
-        Stream.generate(Math::random)
-                .map(n -> n * 100)
-                .map(Double::intValue)
-                .limit(10)
-                .forEach(System.out::println);
-    }
-
-    @Test
     public void parallel() {
-        List<String> words = Arrays.asList("Java", "Scala", "JavaScript", "Kotlin");
+        List<String> words = asList("Java", "Scala", "JavaScript", "Kotlin");
 
         words.stream().parallel()
                 .map(word -> word.split(""))
@@ -89,14 +86,6 @@ public class StreamTest {
     }
 
     @Test
-    public void countUnder55() {
-        assertEquals(1,
-                persons.stream()
-                        .filter(p -> now().getYear() - p.getYearOfBirth() < 55)
-                        .count());
-    }
-
-    @Test
     public void sortByYearOfBirth() {
         persons.stream().sorted(comparing(Person::getYearOfBirth)).forEach(System.out::println);
     }
@@ -108,32 +97,11 @@ public class StreamTest {
     }
 
     @Test
-    public void primeNumbers() {
-        Stream.iterate(0, n -> n + 1).map(BigInteger::valueOf).filter(i -> {
-            System.out.println();
-            return i.isProbablePrime(Integer.MAX_VALUE);
-        }).limit(10).forEach(System.out::println);
-    }
-
-    @Test
-    public void generateFirstPrimeNumbers() {
-        List<Integer> accumulator =
-                Stream.iterate(0, n -> n + 1).parallel()
-                        .map(BigInteger::valueOf)
-                        .filter(i -> i.isProbablePrime(Integer.MAX_VALUE))
-                        .limit(100_000)
-                        .map(BigInteger::intValue)
-                        .collect(Collectors.toList());
-
-        assertEquals(100_000, accumulator.size());
-    }
-
-    @Test
     public void personsUnderAge() {
-        List<Person> personsUnder50 = persons.stream().filter(p -> now().getYear() - p.getYearOfBirth() < 50)
+        List<Person> personsUnder60 = persons.stream().filter(p -> now().getYear() - p.getYearOfBirth() < 60)
                 .collect(toCollection(() -> synchronizedList(new ArrayList<>())));
 
-        personsUnder50.forEach(System.out::println);
+        personsUnder60.forEach(System.out::println);
     }
 
     @Test
@@ -166,44 +134,6 @@ public class StreamTest {
         Map<Integer, Long> countByYear = persons.stream().collect(groupingBy(Person::getYearOfBirth, counting()));
 
         countByYear.forEach((year, count) -> System.out.println(year + " " + count));
-    }
-
-    static class Person {
-        private String id = UUID.randomUUID().toString();
-        private String firstName;
-        private String lastName;
-        private Integer yearOfBirth;
-
-        public Person(String firstName, String lastName, Integer yearOfBirth) {
-            this.firstName = firstName;
-            this.lastName = lastName;
-            this.yearOfBirth = yearOfBirth;
-        }
-
-        public String getId() {
-            return id;
-        }
-
-        public String getFirstName() {
-            return firstName;
-        }
-
-        public String getLastName() {
-            return lastName;
-        }
-
-        public Integer getYearOfBirth() {
-            return yearOfBirth;
-        }
-
-        @Override
-        public String toString() {
-            return "Person{" +
-                    "firstName='" + firstName + '\'' +
-                    ", lastName='" + lastName + '\'' +
-                    ", yearOfBirth=" + yearOfBirth +
-                    '}';
-        }
     }
 
 }

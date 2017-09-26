@@ -1,4 +1,4 @@
-package java8playground;
+package java8playground.tailrec;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -7,27 +7,27 @@ import java.util.stream.Stream;
 
 public class TailRecursionTest {
 
-    public static long sum(final long n) {
-        return n == 1 ? n : n + sum(n - 1);
-    }
-
-    public static Tail<Long> tailSum(final long accumulator, final long n) {
-        return n == 1 ? Tail.done(accumulator) : Tail.compute(() -> tailSum(accumulator + n, n - 1));
-    }
-
     @Test(expected = StackOverflowError.class)
     public void stackOverflow() throws Exception {
         sum(200_000);
     }
 
     @Test
-    public void factorialSmallNumber() {
-        Assert.assertEquals(50_005_000, sum(10_000));
+    public void sumSmallNumber() {
+        Assert.assertEquals(500_500, sum(1_000));
     }
 
     @Test
     public void factorialTail() {
         Assert.assertEquals(new Long(20_000_099_999L), tailSum(0, 200_000).invoke());
+    }
+
+    private long sum(final long n) {
+        return n == 1 ? n : n + sum(n - 1);
+    }
+
+    private Tail<Long> tailSum(final long accumulator, final long n) {
+        return n == 1 ? Tail.done(accumulator) : Tail.compute(() -> tailSum(accumulator + n, n - 1));
     }
 
     interface Tail<T> {

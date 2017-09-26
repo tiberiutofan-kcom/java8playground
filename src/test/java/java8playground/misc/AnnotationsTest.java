@@ -1,4 +1,4 @@
-package java8playground;
+package java8playground.misc;
 
 import org.junit.Test;
 
@@ -23,11 +23,6 @@ public class AnnotationsTest {
         //this could result in a compilation error
     }
 
-    @Authorized(permissionsRequired = "root", securedParamName = "operatingSystem")
-    @Authorized(permissionsRequired = "owner", securedParamName = "homeDirectory")
-    public void securedOperation(String operatingSystem, String homeDirectory) {
-    }
-
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
     public @interface NotEmpty {
@@ -36,21 +31,6 @@ public class AnnotationsTest {
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
     public @interface NotNull {
-    }
-
-    @Target({METHOD, TYPE})
-    @Retention(RUNTIME)
-    @Repeatable(MultiAuthorized.class)
-    public @interface Authorized {
-        String[] permissionsRequired() default {};
-
-        String securedParamName() default "";
-    }
-
-    @Target({METHOD, TYPE})
-    @Retention(RUNTIME)
-    public @interface MultiAuthorized {
-        Authorized[] value() default {};
     }
 
     @Target({PARAMETER})
